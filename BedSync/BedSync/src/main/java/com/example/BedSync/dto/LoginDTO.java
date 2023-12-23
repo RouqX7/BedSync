@@ -1,17 +1,8 @@
 package com.example.BedSync.dto;
 
 public class LoginDTO {
-    private String id;
     private String email;
     private String password;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getEmail() {
         return email;
@@ -28,4 +19,6 @@ public class LoginDTO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

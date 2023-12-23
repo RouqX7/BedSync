@@ -6,6 +6,7 @@ import com.example.BedSync.dto.LoginDTO;
 import com.example.BedSync.models.User;
 import com.example.BedSync.services.UserAuthService;
 import com.example.BedSync.services.UserService;
+import com.example.BedSync.services.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,19 +33,14 @@ public class AuthController {
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserAuthService userAuthService;
+    @Autowired
+    private ValidationService validationService;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDTO.getEmail(),
-                            loginDTO.getPassword()
-                    )
-            );
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtTokenUtil.generateToken((UserDetails) authentication.getPrincipal());
+            String jwt = userAuthService.loginUser(loginDTO);
             return ResponseEntity.ok(new AuthToken(jwt));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");

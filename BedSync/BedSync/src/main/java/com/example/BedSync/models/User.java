@@ -52,6 +52,10 @@ public class User {
         this.profilePictureUrl = profilePictureUrl;
     }
 
+    public User(){
+
+    }
+
     public String getId() {
         return id;
     }
