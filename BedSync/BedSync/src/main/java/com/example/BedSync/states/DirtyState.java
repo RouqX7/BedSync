@@ -10,7 +10,7 @@ public class DirtyState implements BedState {
 
     @Override
     public String getStatus() {
-        return "Dirty";
+        return "DIRTY";
     }
 }
 

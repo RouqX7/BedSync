@@ -17,9 +17,7 @@ public abstract class Ward {
     protected int totalBeds;
     protected int availableBeds;
 
-    public abstract void prepareWard();
 
-    // Common getters and setters
 
 
     public String getId() {

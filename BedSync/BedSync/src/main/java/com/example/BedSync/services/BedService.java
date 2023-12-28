@@ -4,9 +4,7 @@ import com.example.BedSync.models.Bed;
 import com.example.BedSync.models.Ward;
 import com.example.BedSync.repos.BedRepository;
 import com.example.BedSync.repos.WardRepository;
-import com.example.BedSync.states.AvailableState;
-import com.example.BedSync.states.DirtyState;
-import com.example.BedSync.states.OccupiedState;
+import com.example.BedSync.states.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +13,14 @@ import java.util.Optional;
 
 @Service
 public class BedService {
-    @Autowired
-    private BedRepository bedRepository;
-    @Autowired
-    private WardRepository wardRepository;
+    private final BedRepository bedRepository;
+    private final WardRepository wardRepository;
 
+    @Autowired
+    public BedService(BedRepository bedRepository, WardRepository wardRepository) {
+        this.bedRepository = bedRepository;
+        this.wardRepository = wardRepository;
+    }
     public List<Bed> getAllBeds() {
         return bedRepository.findAll();
     }
@@ -27,7 +28,7 @@ public class BedService {
     public Bed createRoom(Bed bed) {
         return bedRepository.save(bed);
     }
-    public Optional<Bed> getById(String id) {
+    public Optional<Bed> getBedById(String id) {
         return bedRepository.findById(id);
     }
     public Bed saveOrUpdate(Bed bed) {
@@ -37,39 +38,38 @@ public class BedService {
         bedRepository.deleteById(id);
     }
 
-    public void updateBedState(String bedId, String state) {
-        Bed bed = bedRepository.findById(bedId).orElseThrow(() -> new RuntimeException("Bed not found"));
+    public void updateBedState(String bedId, String newState, BedState bedState) {
+        Bed bed = bedRepository.findById(bedId)
+                .orElseThrow(() -> new RuntimeException("Bed not found with id: " + bedId));
 
-        switch (state.toUpperCase()) {
-            case "AVAILABLE":
-                bed.setState(new AvailableState());
-                break;
-            case "OCCUPIED":
-                bed.setState(new OccupiedState());
-                break;
-            case "DIRTY":
-                bed.setState(new DirtyState());
-                break;
-            // ... other states as needed ...
-            default:
-                throw new IllegalArgumentException("Invalid bed state");
-        }
-
+        bed.setState(bedState);
         bedRepository.save(bed);
-        // Update ward's available bed count if necessary
-        updateWardAvailableBeds(bed.getWardId());
-    }
-    private void updateWardAvailableBeds(String wardId) {
-        List<Bed> bedsInWard = bedRepository.findByWardId(wardId);
-        int availableBedCount = (int) bedsInWard.stream()
-                .filter(Bed::isAvailable)
-                .count();
 
+        updateWardAvailableBeds(bed.getWardId(), newState);
+    }
+
+    private void updateWardAvailableBeds(String wardId, String newState) {
         Ward ward = wardRepository.findById(wardId)
                 .orElseThrow(() -> new RuntimeException("Ward not found with id: " + wardId));
-        ward.setAvailableBeds(availableBedCount);
+
+        int currentAvailableBeds = ward.getAvailableBeds();
+
+        switch (newState.toUpperCase()) {
+            case "OCCUPIED":
+            case "DIRTY":
+                ward.setAvailableBeds(Math.max(0, currentAvailableBeds - 1));
+                break;
+            case "AVAILABLE":
+            case "CLEAN":
+                ward.setAvailableBeds(Math.min(ward.getTotalBeds(), currentAvailableBeds + 1));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid bed state: " + newState);
+        }
+
         wardRepository.save(ward);
     }
+
 
 
     public List<Bed> getBedsByWard(String wardId) {

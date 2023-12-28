@@ -12,6 +12,7 @@ public class GeneralWard extends Ward {
         this.currentOccupancy = currentOccupancy;
         this.responsibleDepartment = responsibleDepartment;
         this.totalBeds = totalBeds;
+        this.availableBeds = availableBeds;
     }
 
     @Override
@@ -19,10 +20,6 @@ public class GeneralWard extends Ward {
         return "General";
     }
 
-    @Override
-    public void prepareWard() {
-        // Specific preparation logic for General Ward
-    }
 }
 
 // Other specific Ward types like PediatricsWard, etc.

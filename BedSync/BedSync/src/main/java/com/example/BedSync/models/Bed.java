@@ -1,9 +1,10 @@
 package com.example.BedSync.models;
 
 import com.example.BedSync.states.BedState;
+import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+@Entity
 @Document(collection = "beds")
 public class Bed {
     @Id
@@ -13,15 +14,19 @@ public class Bed {
     private String bedNumber;
     private String bedType;
     private BedState state;
+    private String patientId; // Reference to the patient by its ID
 
-    public Bed(String id, String wardId, boolean isAvailable, String bedNumber, String bedType, BedState state) {
+
+    public Bed(String id, String wardId, boolean isAvailable, String bedNumber, String bedType, BedState state, String patientId) {
         this.id = id;
         this.wardId = wardId;
         this.isAvailable = isAvailable;
         this.bedNumber = bedNumber;
         this.bedType = bedType;
         this.state = state;
+        this.patientId = patientId;
     }
+
 
     public String getId() {
         return id;
@@ -69,5 +74,26 @@ public class Bed {
 
     public void setState(BedState state) {
         this.state = state;
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
+    }
+
+    @Override
+    public String toString() {
+        return "Bed{" +
+                "id='" + id + '\'' +
+                ", wardId='" + wardId + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", bedNumber='" + bedNumber + '\'' +
+                ", bedType='" + bedType + '\'' +
+                ", state=" + state +
+                ", patientId='" + patientId + '\'' +
+                '}';
     }
 }

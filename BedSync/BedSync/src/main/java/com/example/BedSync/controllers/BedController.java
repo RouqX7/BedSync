@@ -1,7 +1,10 @@
 package com.example.BedSync.controllers;
 
 import com.example.BedSync.models.Bed;
+import com.example.BedSync.models.Patient;
 import com.example.BedSync.services.BedService;
+import com.example.BedSync.services.PatientService;
+import com.example.BedSync.states.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +14,9 @@ import java.util.List;
 public class BedController {
     @Autowired
     private BedService bedService;
+
+    @Autowired
+    private PatientService patientService;
 
     @GetMapping
     public ResponseEntity<List<Bed>> getAllBeds() {
@@ -24,7 +30,7 @@ public class BedController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Bed> getBedById(@PathVariable String id) {
-        return bedService.getById(id)
+        return bedService.getBedById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -45,7 +51,25 @@ public class BedController {
     @PatchMapping("/{id}/state")
     public ResponseEntity<?> updateBedState(@PathVariable String id, @RequestParam String state) {
         try {
-            bedService.updateBedState(id, state);
+            BedState bedState;
+            switch (state.toUpperCase()) {
+                case "AVAILABLE":
+                    bedState = new AvailableState();
+                    break;
+                case "OCCUPIED":
+                    bedState= new OccupiedState();
+                    break;
+                case "DIRTY":
+                    bedState= new DirtyState();
+                    break;
+                case "CLEAN":
+                    bedState= new CleanState();
+                    break;
+                // Other cases for different states
+                default:
+                    throw new IllegalArgumentException("Invalid bed state");
+            }
+            bedService.updateBedState(id, state, bedState);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -57,5 +81,12 @@ public class BedController {
         List<Bed> beds = bedService.getBedsByWard(wardId);
         return ResponseEntity.ok(beds);
     }
+
+    @PostMapping("/beds/admit/{patientId}/{bedId}")
+    public ResponseEntity<Patient> admitPatientToBed(@PathVariable String patientId, @PathVariable String bedId) {
+        Patient admittedPatient = patientService.admitPatientToBed(patientId, bedId);
+        return ResponseEntity.ok(admittedPatient);
+    }
+
 
 }

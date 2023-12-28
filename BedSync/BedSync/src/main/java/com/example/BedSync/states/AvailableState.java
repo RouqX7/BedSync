@@ -11,7 +11,7 @@ public class AvailableState implements BedState {
 
     @Override
     public String getStatus() {
-        return "Available";
+        return "AVAILABLE";
     }
 }
 

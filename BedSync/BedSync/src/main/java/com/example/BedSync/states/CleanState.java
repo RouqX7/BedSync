@@ -10,6 +10,6 @@ public class CleanState implements BedState{
 
     @Override
     public String getStatus() {
-        return "Clean";
+        return "CLEAN";
     }
 }

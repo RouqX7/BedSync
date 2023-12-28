@@ -11,6 +11,6 @@ public class OccupiedState implements BedState {
 
     @Override
     public String getStatus() {
-        return "Occupied";
+        return "OCCUPIED";
     }
 }

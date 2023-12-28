@@ -20,8 +20,4 @@ public class ICUWard extends Ward {
         return "ICU";
     }
 
-    @Override
-    public void prepareWard() {
-
-    }
 }

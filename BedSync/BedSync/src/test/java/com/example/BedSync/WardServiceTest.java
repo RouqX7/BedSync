@@ -35,7 +35,7 @@ public class WardServiceTest {
     @Test
     public void testGetAllWards() {
         Ward ward1 = new GeneralWard("1", "General Ward", 20, "General ward description", "Active", 10, "General Medicine", 20, 10);
-        Ward ward2 = new GeneralWard("2", "ICU", 10, "ICU ward description", "Active", 5, "Critical Care", 10, 5);
+        Ward ward2 = new ICUWard("2", "ICU", 10, "ICU ward description", "Active", 5, "Critical Care", 10, 5);
         when(wardRepository.findAll()).thenReturn(Arrays.asList(ward1, ward2));
 
         List<Ward> wards = wardService.getAllWards();
@@ -78,5 +78,4 @@ public class WardServiceTest {
         verify(wardRepository, times(1)).deleteById("1");
     }
 
-    // ... more tests as needed ...
 }
