@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
+@RequestMapping("/api/beds/")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"})
 public class BedController {
     @Autowired
     private BedService bedService;
@@ -88,5 +91,12 @@ public class BedController {
         return ResponseEntity.ok(admittedPatient);
     }
 
+    @GetMapping("/getByTimestampRange")
+    public List<Bed> getBedsByTimestampRange(
+            @RequestParam String startTimestamp,
+            @RequestParam String endTimestamp
+    ) {
+        return bedService.getBedsByTimestampRange(startTimestamp, endTimestamp);
+    }
 
 }

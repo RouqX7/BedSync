@@ -4,6 +4,9 @@ import com.example.BedSync.states.BedState;
 import jakarta.persistence.Entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Document(collection = "beds")
 public class Bed {
@@ -15,9 +18,11 @@ public class Bed {
     private String bedType;
     private BedState state;
     private String patientId; // Reference to the patient by its ID
+    private LocalDateTime timestamp;
 
 
-    public Bed(String id, String wardId, boolean isAvailable, String bedNumber, String bedType, BedState state, String patientId) {
+
+    public Bed(String id, String wardId, boolean isAvailable, String bedNumber, String bedType, BedState state, String patientId,LocalDateTime timestamp) {
         this.id = id;
         this.wardId = wardId;
         this.isAvailable = isAvailable;
@@ -25,8 +30,16 @@ public class Bed {
         this.bedType = bedType;
         this.state = state;
         this.patientId = patientId;
+        this.timestamp = timestamp;
     }
 
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public String getId() {
         return id;
@@ -94,6 +107,7 @@ public class Bed {
                 ", bedType='" + bedType + '\'' +
                 ", state=" + state +
                 ", patientId='" + patientId + '\'' +
+                ", timestamp=" + timestamp +
                 '}';
     }
 }

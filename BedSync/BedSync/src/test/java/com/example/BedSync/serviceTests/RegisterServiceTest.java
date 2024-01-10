@@ -1,4 +1,4 @@
-package com.example.BedSync;
+package com.example.BedSync.serviceTests;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +33,7 @@ public class RegisterServiceTest{
         // Arrange
         User newUser = new User();
         newUser.setEmail("test@example.com");
-        newUser.setPassword("password");
+        newUser.setPassword("Password124%");
 
         when(bCryptPasswordEncoder.encode(anyString())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));

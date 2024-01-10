@@ -1,6 +1,7 @@
 package com.example.BedSync.controllers;
 
 import com.example.BedSync.models.Patient;
+import com.example.BedSync.repos.BedRepository;
 import com.example.BedSync.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,12 +10,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/patients")
+@RequestMapping("/api/patients")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"})
 public class PatientController {
     @Autowired
     private PatientService patientService;
+    @Autowired
+    private BedRepository bedRepository;
+
+    private final Logger logger =  LoggerFactory.getLogger(PatientController.class);
+
 
     @PostMapping("/register")
     public ResponseEntity<Patient> registerNewPatient(@RequestBody Patient patient) {
@@ -61,6 +70,8 @@ public class PatientController {
     @PostMapping("/{patientId}/assign/{bedId}")
     public ResponseEntity<Patient> assignPatientToBed(@PathVariable String patientId, @PathVariable String bedId) {
         Patient patient = patientService.assignPatientToBed(patientId, bedId);
+        logger.debug("Received bedId: {}", bedId);
+
         return ResponseEntity.ok(patient);
     }
 

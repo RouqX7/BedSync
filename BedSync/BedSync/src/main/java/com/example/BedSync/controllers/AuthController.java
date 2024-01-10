@@ -7,23 +7,22 @@ import com.example.BedSync.models.User;
 import com.example.BedSync.services.UserAuthService;
 import com.example.BedSync.services.UserService;
 import com.example.BedSync.services.ValidationService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8081"})
 public class AuthController {
     @Autowired
     private UserService userService;
@@ -46,6 +45,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
         }
     }
+
     @PostMapping("/signup")
     public ResponseEntity<?> createNewUser(@RequestBody User newUser) {
         Optional<User> userExists = userService.findUserByEmail(newUser.getEmail());
@@ -59,4 +59,55 @@ public class AuthController {
         return ResponseEntity.ok("User has been registered successfully");
     }
 
+    @PostMapping("/register-admin")
+    public ResponseEntity<Void> registerAdmin(@RequestBody User newAdmin, HttpServletRequest request) {
+        try {
+            logRequest(newAdmin);
+
+            User registeredAdmin = userAuthService.registerAdmin(newAdmin);
+
+            logBeforeAndAfterRegistration(registeredAdmin);
+
+            if (registeredAdmin != null) {
+                return createResponseEntityWithLocation(request, registeredAdmin.getId());
+            } else {
+                logRegistrationFailure();
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            logException(e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void logRequest(User user) {
+        System.out.println("Received request in registerAdmin method");
+        System.out.println("User details: " + user);
+    }
+
+    private void logBeforeAndAfterRegistration(User registeredUser) {
+        System.out.println("Before registration");
+        System.out.println("After registration. Registered user: " + registeredUser);
+    }
+
+    private ResponseEntity<Void> createResponseEntityWithLocation(HttpServletRequest request, String userId) {
+        URI location = ServletUriComponentsBuilder.fromRequestUri(request)
+                .path("/{id}")
+                .buildAndExpand(userId)
+                .toUri();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(location);
+
+        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+    }
+
+    private void logRegistrationFailure() {
+        System.out.println("Registration failed. The registered user object is null.");
+    }
+
+    private void logException(Exception e) {
+        e.printStackTrace();
+    }
 }
+

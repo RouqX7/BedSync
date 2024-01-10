@@ -1,15 +1,6 @@
 package com.example.BedSync;
 
-public class AuthToken {
-    private String token;
-
-    public AuthToken(String token) {
-        this.token = token;
-    }
+public record AuthToken(String token) {
 
     // Getter
-
-    public String getToken() {
-        return token;
-    }
 }

@@ -16,6 +16,7 @@ public class BedService {
     private final BedRepository bedRepository;
     private final WardRepository wardRepository;
 
+
     @Autowired
     public BedService(BedRepository bedRepository, WardRepository wardRepository) {
         this.bedRepository = bedRepository;
@@ -90,6 +91,10 @@ public class BedService {
             ward.setAvailableBeds(ward.getAvailableBeds() -1);
         }
         wardRepository.save(ward);
+    }
+
+    public List<Bed> getBedsByTimestampRange(String startTimestamp, String endTimestamp) {
+        return bedRepository.findByTimestampBetween(startTimestamp, endTimestamp);
     }
 
 

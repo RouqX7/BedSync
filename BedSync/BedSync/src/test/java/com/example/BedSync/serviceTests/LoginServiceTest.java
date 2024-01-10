@@ -1,7 +1,8 @@
-package com.example.BedSync;
+package com.example.BedSync.serviceTests;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.example.BedSync.JwtTokenUtil;
 import com.example.BedSync.dto.LoginDTO;
 import com.example.BedSync.repos.UserRepository;
 import com.example.BedSync.services.UserAuthService;

@@ -1,4 +1,4 @@
-package com.example.BedSync;
+package com.example.BedSync.serviceTests;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
