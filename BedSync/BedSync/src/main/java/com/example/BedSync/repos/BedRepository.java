@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface BedRepository extends MongoRepository<Bed, String> {
     List<Bed> findByWardId(String wardId);
+    List<Bed> findByTimestampBetween(String startTimestamp, String endTimestamp);
 }

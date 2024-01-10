@@ -66,5 +66,8 @@ public class UserService {
         User user = findUserById(userId);
         return user != null && user.getSecurityAnswer().equals(answer);
     }
+    public Optional<User> searchUsersByEmail(String query) {
+        return userRepository.findByEmail(query);
+    }
 
 }

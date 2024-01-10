@@ -1,10 +1,13 @@
 package com.example.BedSync.models;
 
+import jakarta.persistence.Column;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -17,6 +20,8 @@ public class User {
     @Indexed(unique = true,direction = IndexDirection.DESCENDING)
     private String firstName;
     private String lastName;
+    @Column(unique = true)
+
     private String email;
     private String password;
     private Date createdAt;
@@ -31,11 +36,12 @@ public class User {
     private String securityAnswer;
     private String alternateEmail;
     private String[] permissions;
+    @Transient
+    private MultipartFile image;
     private String profilePictureUrl;
 
 
-    public User(String id, String firstName, String lastName, String email, String password, Date createdAt, Date updatedAt, Role role, Set<Role> roles, String phoneNumber, String securityQuestion, String securityAnswer, String alternateEmail, String[] permissions, String profilePictureUrl) {
-        this.id = id;
+    public User(String id, String firstName, String lastName, String email, String password, Date createdAt, Date updatedAt, Role role, Set<Role> roles, String phoneNumber, String securityQuestion, String securityAnswer, String alternateEmail, String[] permissions, String profilePictureUrl, MultipartFile image) {        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -50,6 +56,7 @@ public class User {
         this.alternateEmail = alternateEmail;
         this.permissions = permissions;
         this.profilePictureUrl = profilePictureUrl;
+        this.image = image;
     }
 
     public User(){
@@ -174,6 +181,14 @@ public class User {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
+    public MultipartFile getImage() {
+        return image;
+    }
+
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
+
 
     @Override
     public String toString() {
@@ -186,11 +201,13 @@ public class User {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", role=" + role +
+                ", roles=" + roles +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", securityQuestion='" + securityQuestion + '\'' +
                 ", securityAnswer='" + securityAnswer + '\'' +
                 ", alternateEmail='" + alternateEmail + '\'' +
                 ", permissions=" + Arrays.toString(permissions) +
+                ", image=" + image +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 '}';
     }

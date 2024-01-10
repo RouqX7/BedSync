@@ -92,6 +92,11 @@ public class BedService {
         wardRepository.save(ward);
     }
 
+    public List<Bed> getBedsByTimestampRange(String startTimestamp, String endTimestamp) {
+        return bedRepository.findByTimestampBetween(startTimestamp, endTimestamp);
+    }
+
+
 
 
     // Other methods for bed management
